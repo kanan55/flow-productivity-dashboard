@@ -1,8 +1,8 @@
 import axios from "axios";
 
-// Create Axios instance with proxy base path
+// Create Axios instance with dynamic base URL support
 const api = axios.create({
-    baseURL: "/api",
+    baseURL: process.env.REACT_APP_API_URL || "/api",
     headers: {
         "Content-Type": "application/json",
     },
