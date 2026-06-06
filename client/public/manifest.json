@@ -1,0 +1,21 @@
+{
+  "short_name": "Flow",
+  "name": "Flow — Smart Productivity Dashboard",
+  "icons": [
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#0c0a09",
+  "theme_color": "#0c0a09",
+  "display": "standalone",
+  "orientation": "portrait"
+}
