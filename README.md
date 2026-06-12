@@ -1,125 +1,373 @@
-# Flow — Full-Stack PWA Productivity Ecosystem
+# Flow Productivity Dashboard
 
-**Flow** is a premium, high-performance productivity ecosystem engineered to elevate user focus, optimize daily scheduling, and track habits. Designed with a gorgeous, translucent glassmorphic interface, it offers a seamless UX optimized for both desktop and mobile screens.
+Flow is a full-stack productivity dashboard for tasks, habits, daily planning, analytics, and focus sessions. It has a React PWA frontend and an Express/MongoDB backend with JWT authentication.
 
----
+Live frontend: https://flow-productivity-dashboard.vercel.app/
 
-## 🚀 Key Engineering & Architecture Highlights (Resume-Ready)
+## Tech Stack
 
-* **Global Lifecycle & Pomodoro Engine**: Engineered a global state context (`AppContext`) that encapsulates a background countdown timer, allowing focus sessions to tick seamlessly across client tab switches and page navigations.
-* **Progressive Web App (PWA) Integration**: Implemented PWA specifications including custom Web App Manifests and a service-worker caching layer, enabling borderless, standalone installations on Windows, macOS, iOS, and Android.
-* **Procedural Auditory Synthesis (Web Audio API)**: Authored custom, low-latency sound synthesis algorithms (e.g. swept bandpass filters for vocal formants, LFO amplitude-modulation for coziness rumbles, and multi-node gain controllers) to replace heavy sound files with lightweight code-synthesized chimes.
-* **Translucent Glassmorphic Design System**: Authored an adaptive styling architecture using CSS variables to transition between 6 custom artistic themes (Midnight, Sunset, Forest, Glass, Aurora, and Cat). Employs automated typographic contrast matching to keep text readable against custom wallpapers.
-* **Productivity Score Metrics Engine**: Designed a dynamic dashboard algorithm that calculates a daily Productivity Score based on a weighted average of completed tasks (40%), focus duration (40%), and habit compliance (20%).
-* **Hybrid Storage & Auth Architecture**: Built a Node/Express backend using MongoDB/Mongoose with JSON Web Token (JWT) authorization, complemented by a resilient in-memory client storage fallback that ensures 100% functionality for guest or offline users.
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 18, Tailwind CSS, Framer Motion |
+| Charts | Recharts |
+| Icons | Lucide React |
+| Backend | Node.js, Express |
+| Database | MongoDB with Mongoose |
+| Auth | JWT + bcrypt |
+| Tests | Jest, Supertest, React Testing Library |
 
----
+## Local Setup
 
-## 🛠️ Technology Stack
+### Backend
 
-| Layer | Technology | Key Capabilities |
-| :--- | :--- | :--- |
-| **Frontend** | React 18, Tailwind CSS | Single Page Application framework with responsive utility styles |
-| **Animations** | Framer Motion | Fluid card transitions, sidebar slides, and spring-based layouts |
-| **Data Viz** | Recharts | Custom vector-based productivity graphs and interactive charts |
-| **Icons** | Lucide React | High-contrast vector typography indicators |
-| **Backend** | Node.js, Express | Modular REST API routing and token-based auth |
-| **Database** | MongoDB (Mongoose) | Document-store schemas with database fallback |
-
-## How to Open the Website
-
-Follow these steps to start both the backend and frontend servers:
-
-### 1. Prerequisites
-- **Node.js**: Version 18+ installed on your computer.
-- **MongoDB** (Optional): A local database or Atlas URL. The backend has an automatic in-memory fallback, so it runs perfectly even if MongoDB is not running!
-
-### 2. Start the Backend Server
-Open a terminal in the project directory, then navigate to the server and start it:
 ```bash
 cd server
 npm install
+cp .env.example .env
 npm start
 ```
-* The backend server will start listening at `http://localhost:5000`.
-* You can check the health status of the backend at `http://localhost:5000/api/health`.
 
-### 3. Start the Frontend Dev Server
-Open a second terminal in the project directory, then navigate to the client and start it:
+The API runs at `http://localhost:5000`. Health check:
+
+```bash
+GET http://localhost:5000/api/health
+```
+
+### Frontend
+
 ```bash
 cd client
 npm install
+cp .env.example .env
 npm start
 ```
-* The frontend server will start and automatically try to open **`http://localhost:3000`** in your browser. 
-* If it doesn't open automatically, just type **`http://localhost:3000`** into your browser's address bar.
 
----
+The React app runs at `http://localhost:3000`.
 
-## How to Change Wallpapers for Themes
+For production deploys, set `REACT_APP_API_URL` to the deployed API base URL, for example:
 
-The dashboard has 6 visual themes: **Midnight**, **Sunset**, **Forest**, **Glass**, **Aurora**, and **Cat**. Each theme is bound to a specific background wallpaper image.
+```env
+REACT_APP_API_URL=https://your-api-host.example.com/api
+```
 
-To change or customize the wallpaper for any of these themes:
+If this value is missing on Vercel, login/register requests will go to `/api` on the frontend domain and will fail unless a backend is deployed there.
 
-1. **Prepare Your Image**: Ensure your new image is a `.png` file.
-2. **Locate the Asset Folder**: Go to the public wallpapers directory:
-   `client/public/wallpapers/`
-3. **Overwrite the Corresponding File**: Rename your new `.png` file to match the theme name you want to update and replace it in the folder:
-   - Midnight Theme ➔ `midnight.png`
-   - Sunset Theme ➔ `sunset.png`
-   - Forest Theme ➔ `forest.png`
-   - Glass Theme ➔ `glass.png`
-   - Aurora Theme ➔ `aurora.png`
-   - Cat Theme ➔ `cat.png`
-4. **Rebuild the Application**: To package the new assets, run the build command in the `client` folder:
-   ```bash
-   cd client
-   npm run build
-   ```
-5. **Reload the Website**: Refresh `http://localhost:3000` in your browser. The theme will now load with your new wallpaper!
+## Guest Mode
 
----
+When MongoDB is unavailable, the API can continue in memory and the frontend can also use local browser state for guest usage. Guest Mode is useful for demos, but data resets when the server restarts or browser storage is cleared.
 
 ## Folder Structure
 
-```
-smart-productivity-dashboard/
-├── client/          # React frontend
+```text
+flow-productivity-dashboard/
+├── client/
+│   ├── public/
+│   │   ├── sounds/
+│   │   └── wallpapers/
 │   └── src/
-│       ├── components/   # Reusable UI components
-│       ├── pages/        # Page-level views
-│       ├── context/      # Global state (React Context)
-│       ├── hooks/        # Custom hooks
-│       └── utils/        # AI engine, helpers
-├── server/          # Express backend
-│   ├── models/      # Mongoose schemas
-│   └── routes/      # API endpoints
+│       ├── components/
+│       ├── context/
+│       ├── hooks/
+│       ├── pages/
+│       └── utils/
+├── server/
+│   ├── config/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   └── tests/
+├── .github/workflows/
+├── LICENSE
 └── README.md
+```
+
+## Theme Assets
+
+Theme wallpapers live in `client/public/wallpapers/`.
+
+Theme sounds live in `client/public/sounds/`.
+
+Current theme asset names:
+
+```text
+midnight.png / midnight.mp3
+sunset.png / sunset.mp3
+forest.png / forest.mp3
+glass.png / glass.mp3
+aurora.png / aurora.mp3
+cat.png / cat.mp3
 ```
 
 ## API Endpoints
 
-| Method | Endpoint              | Description            |
-| ------ | --------------------- | ---------------------- |
-| GET    | /api/tasks            | Fetch all tasks        |
-| POST   | /api/tasks            | Create a task          |
-| PUT    | /api/tasks/:id        | Update a task          |
-| DELETE | /api/tasks/:id        | Delete a task          |
-| GET    | /api/habits           | Fetch all habits       |
-| POST   | /api/habits           | Create a habit         |
-| POST   | /api/habits/:id/checkin | Toggle daily check-in |
-| GET    | /api/focus            | Fetch focus sessions   |
-| POST   | /api/focus            | Start a session        |
-| PUT    | /api/focus/:id        | End a session          |
+### Auth
+
+`POST /api/auth/register`
+
+Request:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secret123"
+}
+```
+
+Response:
+
+```json
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "email": "user@example.com",
+    "visualTheme": "midnight",
+    "darkMode": true
+  }
+}
+```
+
+`POST /api/auth/login`
+
+Request:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secret123"
+}
+```
+
+Response:
+
+```json
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "email": "user@example.com"
+  }
+}
+```
+
+`GET /api/auth/me`
+
+Response:
+
+```json
+{
+  "id": "user_id",
+  "email": "user@example.com",
+  "visualTheme": "midnight",
+  "darkMode": true
+}
+```
+
+### Tasks
+
+`GET /api/tasks`
+
+Response:
+
+```json
+[
+  {
+    "_id": "task_id",
+    "title": "Write launch checklist",
+    "category": "Work",
+    "priority": "high",
+    "status": "pending"
+  }
+]
+```
+
+`POST /api/tasks`
+
+Request:
+
+```json
+{
+  "title": "Write launch checklist",
+  "description": "Prepare final deploy steps",
+  "category": "Work",
+  "priority": "high",
+  "deadline": "2026-06-30T00:00:00.000Z"
+}
+```
+
+Response:
+
+```json
+{
+  "_id": "task_id",
+  "title": "Write launch checklist",
+  "status": "pending"
+}
+```
+
+`PUT /api/tasks/:id`
+
+Request:
+
+```json
+{
+  "status": "completed"
+}
+```
+
+Response:
+
+```json
+{
+  "_id": "task_id",
+  "title": "Write launch checklist",
+  "status": "completed",
+  "completedAt": "2026-06-12T12:00:00.000Z"
+}
+```
+
+`DELETE /api/tasks/:id`
+
+Response:
+
+```json
+{
+  "message": "Task deleted successfully"
+}
+```
+
+### Habits
+
+`GET /api/habits`
+
+Response:
+
+```json
+[
+  {
+    "_id": "habit_id",
+    "name": "Morning workout",
+    "frequency": "daily",
+    "completions": []
+  }
+]
+```
+
+`POST /api/habits`
+
+Request:
+
+```json
+{
+  "name": "Morning workout",
+  "icon": "dumbbell",
+  "color": "#10b981",
+  "frequency": "daily"
+}
+```
+
+Response:
+
+```json
+{
+  "_id": "habit_id",
+  "name": "Morning workout",
+  "isActive": true
+}
+```
+
+`POST /api/habits/:id/checkin`
+
+Response:
+
+```json
+{
+  "_id": "habit_id",
+  "name": "Morning workout",
+  "completions": ["2026-06-12T00:00:00.000Z"]
+}
+```
+
+### Focus Sessions
+
+`GET /api/focus`
+
+Response:
+
+```json
+[
+  {
+    "_id": "session_id",
+    "duration": 25,
+    "completed": true
+  }
+]
+```
+
+`POST /api/focus`
+
+Request:
+
+```json
+{
+  "duration": 25,
+  "breakDuration": 5,
+  "completed": false
+}
+```
+
+Response:
+
+```json
+{
+  "_id": "session_id",
+  "duration": 25,
+  "completed": false
+}
+```
+
+`PUT /api/focus/:id`
+
+Request:
+
+```json
+{
+  "completed": true
+}
+```
+
+Response:
+
+```json
+{
+  "_id": "session_id",
+  "duration": 25,
+  "completed": true,
+  "endedAt": "2026-06-12T12:00:00.000Z"
+}
+```
+
+## Tests
+
+Run backend tests:
+
+```bash
+cd server
+npm test
+```
+
+Run frontend tests:
+
+```bash
+cd client
+npm test
+```
 
 ## Future Improvements
 
-- [ ] User authentication (JWT + bcrypt)
-- [ ] Real AI integration (OpenAI API for smarter recommendations)
-- [ ] Push notifications for reminders
-- [ ] Collaborative task boards
-- [ ] Calendar sync (Google Calendar integration)
-- [ ] Data export (CSV, PDF)
-- [ ] Mobile app (React Native)
-- [ ] Widget support for home screen
+- Real AI integration for smarter recommendations
+- Push notifications for reminders
+- Collaborative task boards
+- Calendar sync
+- Data export
+- Mobile app

@@ -21,6 +21,12 @@ const memoryStore = {
     focus: [],
 };
 
+function resetMemoryStore() {
+    memoryStore.tasks = [];
+    memoryStore.habits = [];
+    memoryStore.focus = [];
+}
+
 const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 const isMongoReady = () => mongoose.connection.readyState === 1;
 
@@ -111,8 +117,10 @@ function memoryFallback(req, res, next) {
     return next();
 }
 
-// Connect to database
-connectDB();
+// Connect to database outside tests. Tests use the in-memory API fallback.
+if (process.env.NODE_ENV !== "test") {
+    connectDB();
+}
 
 // Apply memory fallback for API calls if MongoDB is disconnected
 app.use(memoryFallback);
@@ -141,6 +149,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = { app, memoryStore, resetMemoryStore };
