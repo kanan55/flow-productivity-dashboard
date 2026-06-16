@@ -16,15 +16,19 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* ============================================
+   LIGHT MODE DEFAULTS (Indigo accent)
+   ============================================ */
+
 body {
     --theme-bg: #f8fafc;
     --theme-bg-soft: #f1f5f9;
-    --theme-card: rgba(255, 255, 255, 0.92);
+    --theme-card: rgba(255, 255, 255, 0.72);
     --theme-card-dark: rgba(241, 245, 249, 0.95);
-    --theme-border: rgba(203, 213, 225, 0.6);
-    --theme-accent: #0ea5e9;
-    --theme-accent-2: #2563eb;
-    --theme-accent-3: #0369a1;
+    --theme-border: rgba(203, 213, 225, 0.5);
+    --theme-accent: #6366f1;
+    --theme-accent-2: #818cf8;
+    --theme-accent-3: #4f46e5;
     --theme-ink: #0f172a;
     font-family: "DM Sans", system-ui, sans-serif;
     background: var(--theme-bg);
@@ -33,237 +37,59 @@ body {
 }
 
 /* ============================================
-   NATURE-INSPIRED ARTISTIC THEMES
-   Each theme uses real anime-style wallpaper art
-   with beautiful Light and Dark variations!
+   DARK MODE OVERRIDE
    ============================================ */
 
-/* --- MIDNIGHT THEME (Default) --- */
-html[data-theme="midnight"] body {
-    --theme-bg: #f8fafc;
-    --theme-bg-soft: #f1f5f9;
-    --theme-card: rgba(241, 245, 249, 0.42); /* Soft slate-tinted translucent glass */
-    --theme-card-dark: rgba(241, 245, 249, 0.95);
-    --theme-border: rgba(203, 213, 225, 0.5);
-    --theme-accent: #0284c7;
-    --theme-accent-2: #2563eb;
-    --theme-accent-3: #0369a1;
-    --theme-ink: #0f172a;
-}
-html.dark[data-theme="midnight"] body {
+html.dark body {
     --theme-bg: #0f172a;
-    --theme-bg-soft: #0f1729;
-    --theme-card: rgba(15, 23, 42, 0.50);
-    --theme-card-dark: rgba(5, 8, 18, 0.52);
-    --theme-border: rgba(51, 65, 85, 0.6);
-    --theme-accent: #06b6d4;
-    --theme-accent-2: #60a5fa;
-    --theme-accent-3: #0ea5e9;
+    --theme-bg-soft: #1e293b;
+    --theme-card: rgba(30, 41, 59, 0.72);
+    --theme-card-dark: rgba(15, 23, 42, 0.92);
+    --theme-border: rgba(51, 65, 85, 0.5);
     --theme-ink: #f8fafc;
 }
 
-/* --- SUNSET THEME --- */
-/* Sunset Light mode (Golden hour warm breeze) */
-html[data-theme="sunset"] body {
-    --theme-bg: #fffcf9;
-    --theme-bg-soft: #ffeedc;
-    --theme-card: rgba(255, 247, 237, 0.42); /* Warm peach-tinted translucent cream */
-    --theme-card-dark: rgba(254, 243, 199, 0.92);
-    --theme-border: rgba(249, 115, 22, 0.2);
-    --theme-accent: #ea580c;
-    --theme-accent-2: #f97316;
-    --theme-accent-3: #c2410c;
-    --theme-ink: #431407;
-}
-/* Sunset Dark mode (Warm embers) */
-html.dark[data-theme="sunset"] body {
-    --theme-bg: #1a0d08;
-    --theme-bg-soft: #2a1810;
-    --theme-card: rgba(26, 13, 8, 0.50);
-    --theme-card-dark: rgba(10, 5, 0, 0.52);
-    --theme-border: rgba(251, 146, 60, 0.2);
-    --theme-accent: #fb923c;
-    --theme-accent-2: #f97316;
-    --theme-accent-3: #fbbf24;
-    --theme-ink: #fef3c7;
-}
+/* ============================================
+   ACCENT COLOR OVERRIDES
+   Indigo is the default — no override needed.
+   These only change accent colors, not bg/ink.
+   ============================================ */
 
-/* --- FOREST THEME --- */
-/* Forest Light mode (Sun-dappled meadow) */
-html[data-theme="forest"] body {
-    --theme-bg: #f7fee7;
-    --theme-bg-soft: #dcfce7;
-    --theme-card: rgba(240, 253, 244, 0.42); /* Mint/sage-tinted translucent cream */
-    --theme-card-dark: rgba(220, 252, 231, 0.92);
-    --theme-border: rgba(34, 197, 94, 0.2);
-    --theme-accent: #16a34a;
-    --theme-accent-2: #059669;
-    --theme-accent-3: #15803d;
-    --theme-ink: #14532d;
-}
-/* Forest Dark mode (Deep woodland) */
-html.dark[data-theme="forest"] body {
-    --theme-bg: #071a12;
-    --theme-bg-soft: #0d2a1e;
-    --theme-card: rgba(7, 26, 18, 0.50);
-    --theme-card-dark: rgba(3, 12, 8, 0.52);
-    --theme-border: rgba(34, 197, 94, 0.18);
+html[data-accent="emerald"] body {
     --theme-accent: #10b981;
-    --theme-accent-2: #059669;
-    --theme-accent-3: #34d399;
-    --theme-ink: #d1fae5;
+    --theme-accent-2: #34d399;
+    --theme-accent-3: #059669;
 }
 
-/* --- GLASS THEME --- */
-/* Glass Light mode (Lilac & crystal clarity) */
-html[data-theme="glass"] body {
-    --theme-bg: #faf5ff;
-    --theme-bg-soft: #f3e8ff;
-    --theme-card: rgba(250, 245, 255, 0.42); /* Lavender-tinted translucent crystal */
-    --theme-card-dark: rgba(243, 232, 255, 0.92);
-    --theme-border: rgba(167, 139, 250, 0.2);
-    --theme-accent: #7c3aed;
-    --theme-accent-2: #8b5cf6;
-    --theme-accent-3: #6d28d9;
-    --theme-ink: #3b0764;
-}
-/* Glass Dark mode (Northern lights over still lake) */
-html.dark[data-theme="glass"] body {
-    --theme-bg: #0c0a1e;
-    --theme-bg-soft: #151230;
-    --theme-card: rgba(12, 10, 30, 0.50);
-    --theme-card-dark: rgba(5, 4, 14, 0.52);
-    --theme-border: rgba(167, 139, 250, 0.18);
-    --theme-accent: #a78bfa;
-    --theme-accent-2: #8b5cf6;
-    --theme-accent-3: #c4b5fd;
-    --theme-ink: #f3e8ff;
+html[data-accent="rose"] body {
+    --theme-accent: #f43f5e;
+    --theme-accent-2: #fb7185;
+    --theme-accent-3: #e11d48;
 }
 
-/* --- AURORA THEME --- */
-/* Aurora Light mode (Cosmic daydream) */
-html[data-theme="aurora"] body {
-    --theme-bg: #fff1f2;
-    --theme-bg-soft: #ffe4e6;
-    --theme-card: rgba(255, 241, 242, 0.45); /* Rose/pink-tinted translucent cosmic glass */
-    --theme-card-dark: rgba(254, 226, 226, 0.92);
-    --theme-border: rgba(217, 70, 239, 0.2);
-    --theme-accent: #db2777;
-    --theme-accent-2: #9333ea;
-    --theme-accent-3: #0891b2;
-    --theme-ink: #4c0519;
-}
-/* Aurora Dark mode (Cosmic lights) */
-html.dark[data-theme="aurora"] body {
-    --theme-bg: #06081a;
-    --theme-bg-soft: #0e1230;
-    --theme-card: rgba(6, 8, 26, 0.52);
-    --theme-card-dark: rgba(3, 4, 14, 0.54);
-    --theme-border: rgba(217, 70, 239, 0.18);
-    --theme-accent: #d946ef;
-    --theme-accent-2: #a855f7;
-    --theme-accent-3: #06b6d4;
-    --theme-ink: #f5f3ff;
+html[data-accent="amber"] body {
+    --theme-accent: #f59e0b;
+    --theme-accent-2: #fbbf24;
+    --theme-accent-3: #d97706;
 }
 
-/* --- CAT THEME --- */
-/* Cat Light mode (Cozy paw-pink/pastel rose) */
-html[data-theme="cat"] body {
-    --theme-bg: #fffbfb;
-    --theme-bg-soft: #ffebe6;
-    --theme-card: rgba(255, 245, 245, 0.18); /* Soft translucent paw-pink cream */
-    --theme-card-dark: rgba(255, 245, 245, 0.92);
-    --theme-border: rgba(244, 63, 94, 0.18);
-    --theme-accent: #f43f5e; /* Rose / paw-pink */
-    --theme-accent-2: #e11d48;
-    --theme-accent-3: #be123c;
-    --theme-ink: #4c0519; /* Dark cherry ink */
-}
-/* Cat Dark mode (Dark cherry night) */
-html.dark[data-theme="cat"] body {
-    --theme-bg: #15090b;
-    --theme-bg-soft: #241114;
-    --theme-card: rgba(21, 9, 11, 0.52);
-    --theme-card-dark: rgba(10, 4, 5, 0.54);
-    --theme-border: rgba(244, 63, 94, 0.18);
-    --theme-accent: #fb7185;
-    --theme-accent-2: #f43f5e;
-    --theme-accent-3: #fda4af;
-    --theme-ink: #ffe4e6;
-}
-
-/* Dark mode base settings */
-html.dark body {
-    --theme-card: rgba(15, 23, 42, 0.92);
-    --theme-border: rgba(51, 65, 85, 0.6);
+html[data-accent="ocean"] body {
+    --theme-accent: #0ea5e9;
+    --theme-accent-2: #38bdf8;
+    --theme-accent-3: #0284c7;
 }
 
 /* ============================================
-   APP SHELL — wallpaper background
+   APP SHELL
    ============================================ */
 
 .app-shell {
     position: relative;
     isolation: isolate;
-    background: transparent;
+    background: var(--theme-bg);
     overflow-x: hidden;
     min-height: 100dvh;
 }
-
-/* Wallpaper image layer */
-.app-shell::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background-image: var(--theme-wallpaper);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.35;
-    transition: opacity 0.5s ease;
-}
-
-/* Wallpaper gradient overlay (adapts to light/dark) */
-.app-shell::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.02) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-    );
-    pointer-events: none;
-    transition: background 0.3s ease;
-}
-
-html.dark .app-shell::after {
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.2) 0%,
-        rgba(0, 0, 0, 0.4) 50%,
-        rgba(0, 0, 0, 0.65) 100%
-    );
-}
-
-/* Themed wallpaper opacity tuning (Light Mode - higher visibility) */
-html[data-theme="midnight"] .app-shell::before { opacity: 0.85; }
-html[data-theme="sunset"] .app-shell::before { opacity: 0.85; }
-html[data-theme="forest"] .app-shell::before { opacity: 0.85; }
-html[data-theme="glass"] .app-shell::before { opacity: 0.86; }
-html[data-theme="aurora"] .app-shell::before { opacity: 0.88; }
-html[data-theme="cat"] .app-shell::before { opacity: 0.90; }
-
-/* Themed wallpaper opacity tuning (Dark Mode - lower visibility for cozy contrast) */
-html.dark[data-theme="midnight"] .app-shell::before { opacity: 0.28; }
-html.dark[data-theme="sunset"] .app-shell::before { opacity: 0.32; }
-html.dark[data-theme="forest"] .app-shell::before { opacity: 0.25; }
-html.dark[data-theme="glass"] .app-shell::before { opacity: 0.28; }
-html.dark[data-theme="aurora"] .app-shell::before { opacity: 0.35; }
-html.dark[data-theme="cat"] .app-shell::before { opacity: 0.35; }
 
 /* ============================================
    GLASSMORPHISM CARDS & SURFACES
@@ -286,6 +112,10 @@ aside,
     background: var(--theme-card) !important;
     border-color: var(--theme-border) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.app-card {
+    border: 1px solid var(--theme-border) !important;
 }
 
 html.dark .app-card,
@@ -352,341 +182,37 @@ select {
 }
 
 /* ============================================
-   THEME PICKER
+   ACCENT COLOR PICKER
    ============================================ */
 
-.theme-picker {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-    padding: 5px;
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--theme-ink) 7%, transparent);
-    border: 1px solid color-mix(in srgb, var(--theme-ink) 12%, transparent);
-}
-
-.theme-picker__button {
-    position: relative;
-    height: 30px;
+.accent-picker {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    color: color-mix(in srgb, var(--theme-ink) 62%, transparent);
-    border-radius: 8px;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    padding: 0 !important;
-    min-width: 0 !important;
-    background: transparent !important;
-    border: none !important;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.accent-picker__dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
-.theme-picker__button:hover {
-    color: var(--theme-accent);
-    background: color-mix(in srgb, var(--theme-accent) 8%, transparent) !important;
+.accent-picker__dot:hover {
+    transform: scale(1.15);
 }
 
-.theme-picker__button.is-active {
-    color: #ffffff !important;
-}
-
-html.dark .theme-picker__button.is-active {
-    color: #ffffff !important;
-}
-
-.theme-picker__active {
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    background: var(--theme-accent);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-accent) 25%, transparent);
+.accent-picker__dot.is-active {
+    border-color: var(--theme-ink);
+    box-shadow: 0 0 0 2px var(--theme-bg), 0 0 0 4px var(--theme-ink);
 }
 
 /* ============================================
-   COMPANION PET
+   FOCUS CUSTOM TIMER
    ============================================ */
-
-.companion {
-    position: fixed;
-    right: clamp(14px, 3vw, 30px);
-    bottom: clamp(14px, 3vw, 30px);
-    z-index: 45;
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    pointer-events: none;
-}
-
-.companion__bubble,
-.companion__body {
-    pointer-events: auto;
-}
-
-.companion__bubble {
-    position: relative;
-    width: min(230px, calc(100vw - 118px));
-    padding: 12px 34px 12px 13px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.88);
-    border: 1px solid var(--theme-border);
-    box-shadow: 0 18px 45px rgba(28, 25, 23, 0.12);
-    backdrop-filter: blur(16px);
-}
-
-html.dark .companion__bubble {
-    background: rgba(23, 20, 18, 0.86);
-}
-
-.companion__bubble p {
-    font-size: 12px;
-    line-height: 1.35;
-    color: #57534e;
-}
-
-html.dark .companion__bubble p {
-    color: #d6d3d1;
-}
-
-.companion__name {
-    display: block;
-    margin-bottom: 2px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--theme-accent);
-}
-
-.companion__hide {
-    position: absolute;
-    top: 8px;
-    right: 9px;
-    width: 18px;
-    height: 18px;
-    border-radius: 8px;
-    font-size: 11px;
-    color: #a8a29e;
-}
-
-.companion__hide:hover {
-    background: rgba(120, 113, 108, 0.12);
-}
-
-.companion__body {
-    width: 74px;
-    height: 74px;
-    display: grid;
-    place-items: center;
-    border-radius: 24px;
-    background: color-mix(in srgb, var(--theme-accent) 16%, white);
-    border: 1px solid color-mix(in srgb, var(--theme-accent) 30%, transparent);
-    box-shadow: 0 18px 46px color-mix(in srgb, var(--theme-accent) 22%, transparent);
-    position: relative;
-    overflow: visible;
-}
-
-.companion__avatar {
-    position: relative;
-    width: 50px;
-    height: 46px;
-    display: block;
-}
-
-.companion__face {
-    position: absolute;
-    left: 6px;
-    right: 6px;
-    bottom: 2px;
-    height: 36px;
-    border-radius: 18px 18px 16px 16px;
-    background: linear-gradient(145deg, #fff, color-mix(in srgb, var(--theme-accent) 22%, white));
-    border: 2px solid color-mix(in srgb, var(--theme-accent) 50%, #1c1917);
-}
-
-.companion__ear {
-    position: absolute;
-    top: 0;
-    width: 17px;
-    height: 20px;
-    background: var(--theme-accent);
-    border-radius: 7px 10px 2px 10px;
-}
-
-.companion__ear--left {
-    left: 7px;
-    transform: rotate(-22deg);
-}
-
-.companion__ear--right {
-    right: 7px;
-    transform: rotate(22deg) scaleX(-1);
-}
-
-.companion__eye {
-    position: absolute;
-    top: 14px;
-    width: 5px;
-    height: 8px;
-    border-radius: 999px;
-    background: #1c1917;
-    animation: companion-blink 4.4s infinite;
-}
-
-.companion__eye--left {
-    left: 11px;
-}
-
-.companion__eye--right {
-    right: 11px;
-}
-
-.companion__mouth {
-    position: absolute;
-    left: 50%;
-    bottom: 8px;
-    width: 12px;
-    height: 6px;
-    border-bottom: 2px solid #1c1917;
-    border-radius: 0 0 12px 12px;
-    transform: translateX(-50%);
-}
-
-.companion__tail {
-    position: absolute;
-    right: -4px;
-    bottom: 7px;
-    width: 18px;
-    height: 28px;
-    border-right: 5px solid var(--theme-accent-2);
-    border-radius: 50%;
-    transform: rotate(-20deg);
-    transform-origin: bottom center;
-    animation: companion-tail 2.4s ease-in-out infinite;
-}
-
-.companion__perch {
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: -8px;
-    height: 12px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent) 45%, white), color-mix(in srgb, var(--theme-accent-2) 34%, white));
-    box-shadow: 0 10px 22px rgba(28, 25, 23, 0.13);
-}
-
-.companion__breath {
-    position: absolute;
-    left: 50%;
-    top: -10px;
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--theme-accent-3) 60%, transparent);
-    opacity: 0;
-    transform: translateX(-50%);
-}
-
-.companion__spark {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--theme-accent-3);
-    opacity: 0.75;
-}
-
-.companion__spark--one {
-    top: 2px;
-    right: -2px;
-    animation: companion-float 2.6s ease-in-out infinite;
-}
-
-.companion__spark--two {
-    left: -2px;
-    bottom: 6px;
-    width: 5px;
-    height: 5px;
-    animation: companion-float 3s ease-in-out infinite reverse;
-}
-
-html[data-theme="anime"] .companion__body {
-    width: 84px;
-    height: 84px;
-    border-radius: 30px 18px 30px 18px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), color-mix(in srgb, var(--theme-accent) 24%, white));
-}
-
-html[data-theme="anime"] .companion__face {
-    border-radius: 15px 22px 16px 22px;
-}
-
-html[data-theme="anime"] .companion__eye {
-    width: 6px;
-    height: 10px;
-    background: linear-gradient(#111827 0 45%, var(--theme-accent-3) 46% 100%);
-}
-
-html[data-theme="anime"] .companion__spark {
-    clip-path: polygon(50% 0, 64% 34%, 100% 50%, 64% 66%, 50% 100%, 36% 66%, 0 50%, 36% 34%);
-    border-radius: 0;
-}
-
-html[data-theme="cat"] .companion__body {
-    width: 86px;
-    height: 78px;
-    border-radius: 32px;
-    background: linear-gradient(145deg, #fff5f5, color-mix(in srgb, var(--theme-accent) 22%, #fff5f5));
-}
-
-html[data-theme="cat"] .companion__avatar {
-    transform-origin: 50% 80%;
-}
-
-html[data-theme="cat"] .companion__spark--one,
-html[data-theme="cat"] .companion__spark--two {
-    border-radius: 3px;
-    transform: rotate(45deg);
-}
-
-.companion--rest .companion__avatar,
-.companion-page--dashboard.companion--cat .companion__avatar {
-    transform: translateY(8px) scaleX(1.18) scaleY(0.82);
-}
-
-.companion--rest .companion__eye,
-.companion-page--dashboard.companion--cat .companion__eye {
-    height: 2px;
-    top: 19px;
-    border-radius: 999px;
-}
-
-.companion--rest .companion__mouth {
-    width: 10px;
-    height: 4px;
-}
-
-.companion--rest .companion__tail {
-    animation-duration: 4.8s;
-}
-
-.companion--rest .companion__breath {
-    animation: companion-breathe 2.4s ease-in-out infinite;
-}
-
-.companion--focus .companion__body {
-    box-shadow: 0 18px 46px color-mix(in srgb, var(--theme-accent) 28%, transparent),
-        0 0 0 5px color-mix(in srgb, var(--theme-accent) 10%, transparent);
-}
-
-.companion--focus .companion__ear {
-    top: -3px;
-}
-
-.companion--celebrate .companion__spark {
-    opacity: 1;
-    animation-duration: 1s;
-}
 
 .focus-custom-timer {
     max-width: 520px;
@@ -699,150 +225,12 @@ html[data-theme="cat"] .companion__spark--two {
 }
 
 /* ============================================
-   KEYFRAMES
-   ============================================ */
-
-@keyframes companion-blink {
-    0%, 88%, 100% {
-        transform: scaleY(1);
-    }
-    92% {
-        transform: scaleY(0.15);
-    }
-}
-
-@keyframes companion-tail {
-    0%, 100% {
-        transform: rotate(-20deg);
-    }
-    50% {
-        transform: rotate(8deg);
-    }
-}
-
-@keyframes companion-float {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-7px) scale(1.1);
-    }
-}
-
-@keyframes companion-breathe {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, 8px) scale(0.55);
-    }
-    35% {
-        opacity: 0.55;
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -16px) scale(1.3);
-    }
-}
-
-/* ============================================
    MOBILE RESPONSIVE
    ============================================ */
 
 @media (max-width: 640px) {
-    .companion {
-        right: 10px;
-        bottom: 76px; /* Above the tab bar */
-    }
-
-    .companion__bubble {
-        display: none;
-    }
-
-    .companion__body {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-    }
-
-    .companion__avatar {
-        width: 34px;
-        height: 30px;
-    }
-
-    .companion__face {
-        left: 4px;
-        right: 4px;
-        bottom: 1px;
-        height: 24px;
-        border-radius: 12px 12px 10px 10px;
-    }
-
-    .companion__ear {
-        width: 12px;
-        height: 14px;
-    }
-
-    .companion__ear--left {
-        left: 4px;
-    }
-
-    .companion__ear--right {
-        right: 4px;
-    }
-
-    .companion__eye {
-        top: 9px;
-        width: 3px;
-        height: 5px;
-    }
-
-    .companion__eye--left {
-        left: 7px;
-    }
-
-    .companion__eye--right {
-        right: 7px;
-    }
-
-    .companion__mouth {
-        bottom: 5px;
-        width: 8px;
-        height: 3px;
-    }
-
-    .companion__tail {
-        width: 12px;
-        height: 18px;
-        border-right-width: 3px;
-        right: -3px;
-        bottom: 5px;
-    }
-
-    .companion__spark {
-        width: 4px;
-        height: 4px;
-    }
-
-    .companion__spark--two {
-        width: 3px;
-        height: 3px;
-    }
-
-    .companion__perch {
-        left: 6px;
-        right: 6px;
-        bottom: -5px;
-        height: 8px;
-    }
-
     .focus-custom-timer {
         padding: 12px;
-    }
-}
-
-/* Medium mobile — companion above tab bar */
-@media (min-width: 641px) and (max-width: 1023px) {
-    .companion {
-        bottom: 76px;
     }
 }
 

@@ -2,15 +2,15 @@
 // Handles mobile menu toggle with a bottom tab bar for mobile navigation
 
 import { useState } from "react";
-import { Menu, X, LayoutDashboard, CheckSquare, Calendar, Target, Timer, BarChart3 } from "lucide-react";
+import { Menu, X, LayoutDashboard, CheckSquare, Target, Timer, BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "./Sidebar";
+import FAB from "./FAB";
 import { useApp } from "../context/AppContext";
 
 const mobileNavItems = [
     { id: "dashboard", label: "Home", icon: LayoutDashboard },
     { id: "tasks", label: "Tasks", icon: CheckSquare },
-    { id: "planner", label: "Plan", icon: Calendar },
     { id: "habits", label: "Habits", icon: Target },
     { id: "focus", label: "Focus", icon: Timer },
     { id: "analytics", label: "Stats", icon: BarChart3 },
@@ -62,7 +62,7 @@ export default function Layout({ children }) {
                         {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
                     <span className="font-display text-lg text-surface-900 dark:text-surface-50">
-                        Flow
+                        Ṛta
                     </span>
                 </div>
 
@@ -104,6 +104,7 @@ export default function Layout({ children }) {
                     })}
                 </nav>
             </div>
+            <FAB />
         </div>
     );
 }

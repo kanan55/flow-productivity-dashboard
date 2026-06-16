@@ -6,7 +6,6 @@ import { useApp } from "./context/AppContext";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import TaskManager from "./pages/TaskManager";
-import DailyPlanner from "./pages/DailyPlanner";
 import HabitTracker from "./pages/HabitTracker";
 import FocusMode from "./pages/FocusMode";
 import Analytics from "./pages/Analytics";
@@ -15,7 +14,6 @@ import { AnimatePresence, motion } from "framer-motion";
 const pages = {
     dashboard: Dashboard,
     tasks: TaskManager,
-    planner: DailyPlanner,
     habits: HabitTracker,
     focus: FocusMode,
     analytics: Analytics,

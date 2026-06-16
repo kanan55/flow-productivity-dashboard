@@ -336,11 +336,11 @@ export default function FocusMode() {
             </motion.div>
 
             {/* Recent Sessions */}
-            {state.focusSessions.length > 0 && (
-                <Card hover={false}>
-                    <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3">
-                        Recent Sessions
-                    </h3>
+            <Card hover={false}>
+                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3">
+                    Recent Sessions
+                </h3>
+                {state.focusSessions.length > 0 ? (
                     <div className="space-y-2">
                         {state.focusSessions.slice(0, 5).map((session) => (
                             <div
@@ -355,7 +355,7 @@ export default function FocusMode() {
                                     </span>
                                 </div>
                                 <span className="text-xs text-surface-400">
-                                    {new Date(session.startedAt).toLocaleTimeString("en-US", {
+                                    {new Date(session.startedAt || session.createdAt).toLocaleTimeString("en-US", {
                                         hour: "numeric",
                                         minute: "2-digit",
                                     })}
@@ -363,8 +363,12 @@ export default function FocusMode() {
                             </div>
                         ))}
                     </div>
-                </Card>
-            )}
+                ) : (
+                    <p className="text-xs text-surface-400 text-center py-4">
+                        No sessions completed yet. Start your first timer above!
+                    </p>
+                )}
+            </Card>
         </div>
     );
 }

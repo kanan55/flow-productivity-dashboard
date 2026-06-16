@@ -33,6 +33,7 @@ export default function TaskManager() {
     const [showModal, setShowModal] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
+    const [activeTab, setActiveTab] = useState("today");
 
     // Generate current week days (Monday - Sunday)
     const weekDays = useMemo(() => {
@@ -51,8 +52,26 @@ export default function TaskManager() {
         return days;
     }, []);
 
+    // Filter and compute today's tasks specifically (for progress bar & Today list)
+    const todayTasks = useMemo(() => {
+        const today = new Date();
+        return state.tasks.filter((t) => {
+            const isDueToday = t.deadline && isSameDay(new Date(t.deadline), today);
+            const isPendingNoDeadline = !t.deadline && t.status !== "completed";
+            return isDueToday || isPendingNoDeadline;
+        });
+    }, [state.tasks]);
+
     // Filter and search tasks
     const filteredTasks = useMemo(() => {
+        if (activeTab === "today") {
+            const priorityOrder = { high: 1, medium: 2, low: 3, urgent: 4 };
+            // Sort by priority (high > medium > low > urgent at bottom)
+            return [...todayTasks].sort((a, b) => {
+                return (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99);
+            });
+        }
+
         return state.tasks
             .filter((t) => {
                 if (categoryFilter !== "All" && t.category !== categoryFilter) return false;
@@ -62,7 +81,7 @@ export default function TaskManager() {
                 return true;
             })
             .sort((a, b) => (a.order || 0) - (b.order || 0));
-    }, [state.tasks, categoryFilter, statusFilter, search, selectedDate]);
+    }, [state.tasks, todayTasks, categoryFilter, statusFilter, search, selectedDate, activeTab]);
 
     const handleAddTask = () => {
         setEditingTask(null);
@@ -96,6 +115,7 @@ export default function TaskManager() {
     };
 
     const handleReorder = (newOrder) => {
+        if (activeTab !== "all") return; // Reordering only allowed in 'All Tasks' tab
         const reordered = newOrder.map((task, index) => ({
             ...task,
             order: index,
@@ -126,182 +146,243 @@ export default function TaskManager() {
                 </motion.button>
             </div>
 
-            {/* Calendar Week Strip */}
-            <div className="bg-white/40 dark:bg-surface-900/40 backdrop-blur-xl border border-surface-200/50 dark:border-surface-800/50 rounded-2xl p-4 shadow-soft">
-                <div className="flex items-center justify-between mb-3.5">
-                    <span className="text-[10px] font-bold text-surface-500 uppercase tracking-wider px-1">Weekly Schedule</span>
-                    {selectedDate && (
-                        <button
-                            onClick={() => setSelectedDate(null)}
-                            className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
-                        >
-                            Show All
-                        </button>
-                    )}
-                </div>
-                <div className="flex gap-2 justify-between">
-                    {weekDays.map((day) => {
-                        const isSelected = selectedDate && isSameDay(day, selectedDate);
-                        const isTodayDate = isSameDay(day, new Date());
-                        const dayTasks = state.tasks.filter(
-                            (t) => t.status !== "completed" && t.deadline && isSameDay(new Date(t.deadline), day)
-                        );
-                        
-                        // Extract unique priorities for colored dots
-                        const priorities = Array.from(new Set(dayTasks.map((t) => t.priority)));
-
-                        return (
-                            <button
-                                key={day.toISOString()}
-                                onClick={() => setSelectedDate(isSelected ? null : day)}
-                                className={`
-                                    flex-1 flex flex-col items-center py-2 px-1 rounded-xl transition-all duration-200 cursor-pointer
-                                    ${isSelected
-                                        ? "bg-accent text-surface-900 shadow-md scale-[1.02] font-semibold"
-                                        : isTodayDate
-                                            ? "bg-accent/15 text-accent border border-accent/30 font-medium"
-                                            : "hover:bg-surface-100/60 dark:hover:bg-surface-800/30 text-surface-600 dark:text-surface-400"
-                                    }
-                                `}
-                            >
-                                <span className={`text-[9px] uppercase font-bold tracking-wider ${isSelected ? "text-surface-900" : "text-surface-400 dark:text-surface-500"}`}>
-                                    {day.toLocaleDateString("en-US", { weekday: "short" }).substring(0, 3)}
-                                </span>
-                                <span className="text-sm font-bold leading-none mt-1">
-                                    {day.getDate()}
-                                </span>
-                                {/* Dot indicators for tasks scheduled */}
-                                <div className="flex gap-1 mt-1.5 h-1 items-center justify-center">
-                                    {priorities.map((p) => (
-                                        <span
-                                            key={p}
-                                            className={`w-1 h-1 rounded-full ${
-                                                p === "urgent" || p === "high"
-                                                    ? isSelected ? "bg-surface-900" : "bg-rose-500"
-                                                    : p === "medium"
-                                                        ? isSelected ? "bg-surface-900" : "bg-orange-400"
-                                                        : isSelected ? "bg-surface-900" : "bg-emerald-500"
-                                            }`}
-                                        />
-                                    ))}
-                                </div>
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Search & Filters */}
-            <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400" />
-                    <input
-                        type="text"
-                        placeholder="Search tasks..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="
-              w-full pl-10 pr-4 py-2.5 rounded-xl
-              bg-white dark:bg-surface-850
-              border border-surface-200 dark:border-surface-800
-              text-sm text-surface-900 dark:text-surface-50
-              placeholder:text-surface-400
-              focus:outline-none focus:border-accent/50
-              transition-colors
-            "
-                    />
-                </div>
+            {/* Today / All Tabs */}
+            <div className="flex gap-1 p-1 rounded-xl bg-surface-100 dark:bg-surface-900/60 w-fit">
                 <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="
-            flex items-center gap-2 px-4 py-2.5 rounded-xl
-            bg-white dark:bg-surface-850
-            border border-surface-200 dark:border-surface-800
-            text-sm text-surface-600 dark:text-surface-400
-            hover:border-surface-300 dark:hover:border-surface-700
-            transition-colors
-          "
+                    onClick={() => { setActiveTab("today"); setSelectedDate(null); }}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                        activeTab === "today"
+                            ? "bg-white dark:bg-surface-800 shadow-sm text-surface-900 dark:text-surface-50"
+                            : "text-surface-500 hover:text-surface-700"
+                    }`}
                 >
-                    <Filter size={16} />
-                    Filters
-                    <ChevronDown
-                        size={14}
-                        className={`transition-transform ${showFilters ? "rotate-180" : ""}`}
-                    />
+                    Today
+                </button>
+                <button
+                    onClick={() => setActiveTab("all")}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                        activeTab === "all"
+                            ? "bg-white dark:bg-surface-800 shadow-sm text-surface-900 dark:text-surface-50"
+                            : "text-surface-500 hover:text-surface-700"
+                    }`}
+                >
+                    All Tasks
                 </button>
             </div>
 
-            {/* Filter chips */}
-            <AnimatePresence>
-                {showFilters && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-3 overflow-hidden"
-                    >
-                        {/* Category filter */}
-                        <div className="flex flex-wrap gap-2">
-                            {CATEGORIES.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setCategoryFilter(cat)}
-                                    className={`
-                    px-3 py-1.5 rounded-lg text-xs font-medium transition-all
-                    ${categoryFilter === cat
-                                            ? "bg-accent text-surface-900"
-                                            : "bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700"
-                                        }
-                   `}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
+            {/* Calendar Week Strip - only in All Tasks */}
+            {activeTab === "all" && (
+                <div className="bg-white/40 dark:bg-surface-900/40 backdrop-blur-xl border border-surface-200/50 dark:border-surface-800/50 rounded-2xl p-4 shadow-soft">
+                    <div className="flex items-center justify-between mb-3.5">
+                        <span className="text-[10px] font-bold text-surface-500 uppercase tracking-wider px-1">Weekly Schedule</span>
+                        {selectedDate && (
+                            <button
+                                onClick={() => setSelectedDate(null)}
+                                className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
+                            >
+                                Show All
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex gap-2 justify-between">
+                        {weekDays.map((day) => {
+                            const isSelected = selectedDate && isSameDay(day, selectedDate);
+                            const isTodayDate = isSameDay(day, new Date());
+                            const dayTasks = state.tasks.filter(
+                                (t) => t.status !== "completed" && t.deadline && isSameDay(new Date(t.deadline), day)
+                            );
+                            
+                            // Extract unique priorities for colored dots
+                            const priorities = Array.from(new Set(dayTasks.map((t) => t.priority)));
 
-                        {/* Status filter */}
-                        <div className="flex flex-wrap gap-2">
-                            {["all", "pending", "in-progress", "completed"].map((s) => (
+                            return (
                                 <button
-                                    key={s}
-                                    onClick={() => setStatusFilter(s)}
+                                    key={day.toISOString()}
+                                    onClick={() => setSelectedDate(isSelected ? null : day)}
                                     className={`
-                    px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all
-                    ${statusFilter === s
-                                            ? "bg-accent text-surface-900"
-                                            : "bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700"
+                                        flex-1 flex flex-col items-center py-2 px-1 rounded-xl transition-all duration-200 cursor-pointer
+                                        ${isSelected
+                                            ? "bg-accent text-surface-900 shadow-md scale-[1.02] font-semibold"
+                                            : isTodayDate
+                                                ? "bg-accent/15 text-accent border border-accent/30 font-medium"
+                                                : "hover:bg-surface-100/60 dark:hover:bg-surface-800/30 text-surface-600 dark:text-surface-400"
                                         }
-                   `}
+                                    `}
                                 >
-                                    {s === "all" ? "All Status" : s.replace("-", " ")}
+                                    <span className={`text-[9px] uppercase font-bold tracking-wider ${isSelected ? "text-surface-900" : "text-surface-400 dark:text-surface-500"}`}>
+                                        {day.toLocaleDateString("en-US", { weekday: "short" }).substring(0, 3)}
+                                    </span>
+                                    <span className="text-sm font-bold leading-none mt-1">
+                                        {day.getDate()}
+                                    </span>
+                                    {/* Dot indicators for tasks scheduled */}
+                                    <div className="flex gap-1 mt-1.5 h-1 items-center justify-center">
+                                        {priorities.map((p) => (
+                                            <span
+                                                key={p}
+                                                className={`w-1 h-1 rounded-full ${
+                                                    p === "urgent" || p === "high"
+                                                        ? isSelected ? "bg-surface-900" : "bg-rose-500"
+                                                        : p === "medium"
+                                                            ? isSelected ? "bg-surface-900" : "bg-orange-400"
+                                                            : isSelected ? "bg-surface-900" : "bg-emerald-500"
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
                                 </button>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Search & Filters - only in All Tasks */}
+            {activeTab === "all" && (
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400" />
+                        <input
+                            type="text"
+                            placeholder="Search tasks..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="
+                  w-full pl-10 pr-4 py-2.5 rounded-xl
+                  bg-white dark:bg-surface-850
+                  border border-surface-200 dark:border-surface-800
+                  text-sm text-surface-900 dark:text-surface-50
+                  placeholder:text-surface-400
+                  focus:outline-none focus:border-accent/50
+                  transition-colors
+                "
+                        />
+                    </div>
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="
+                flex items-center gap-2 px-4 py-2.5 rounded-xl
+                bg-white dark:bg-surface-850
+                border border-surface-200 dark:border-surface-800
+                text-sm text-surface-600 dark:text-surface-400
+                hover:border-surface-300 dark:hover:border-surface-700
+                transition-colors
+              "
+                    >
+                        <Filter size={16} />
+                        Filters
+                        <ChevronDown
+                            size={14}
+                            className={`transition-transform ${showFilters ? "rotate-180" : ""}`}
+                        />
+                    </button>
+                </div>
+            )}
+
+            {/* Filter chips - only in All Tasks */}
+            {activeTab === "all" && (
+                <AnimatePresence>
+                    {showFilters && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="space-y-3 overflow-hidden"
+                        >
+                            {/* Category filter */}
+                            <div className="flex flex-wrap gap-2">
+                                {CATEGORIES.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setCategoryFilter(cat)}
+                                        className={`
+                        px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+                        ${categoryFilter === cat
+                                                ? "bg-accent text-surface-900"
+                                                : "bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700"
+                                            }
+                       `}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Status filter */}
+                            <div className="flex flex-wrap gap-2">
+                                {["all", "pending", "in-progress", "completed"].map((s) => (
+                                    <button
+                                        key={s}
+                                        onClick={() => setStatusFilter(s)}
+                                        className={`
+                        px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all
+                        ${statusFilter === s
+                                                ? "bg-accent text-surface-900"
+                                                : "bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700"
+                                            }
+                       `}
+                                    >
+                                        {s === "all" ? "All Status" : s.replace("-", " ")}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            )}
+
+            {/* Today's Tasks Progress Bar */}
+            {activeTab === "today" && (
+                <div className="flex items-center gap-3 text-sm text-surface-500 py-1">
+                    <span className="font-medium text-surface-900 dark:text-surface-50">
+                        {todayTasks.filter(t => t.status === "completed").length}/{todayTasks.length} done
+                    </span>
+                    <div className="flex-1 h-1.5 bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
+                        <div
+                            className="h-full rounded-full bg-accent transition-all duration-500"
+                            style={{ width: `${todayTasks.length ? (todayTasks.filter(t => t.status === "completed").length / todayTasks.length) * 100 : 0}%` }}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Task List */}
-            <Reorder.Group axis="y" values={filteredTasks} onReorder={handleReorder} className="space-y-2">
-                <AnimatePresence mode="popLayout">
-                    {filteredTasks.map((task) => (
-                        <TaskCard
-                            key={task._id}
-                            task={task}
-                            onToggle={() => handleToggleStatus(task)}
-                            onEdit={() => handleEditTask(task)}
-                            onDelete={() => handleDeleteTask(task._id)}
-                        />
-                    ))}
-                </AnimatePresence>
-            </Reorder.Group>
+            {filteredTasks.length > 0 && (
+                <Reorder.Group axis="y" values={filteredTasks} onReorder={handleReorder} className="space-y-2">
+                    <AnimatePresence mode="popLayout">
+                        {filteredTasks.map((task) => (
+                            <TaskCard
+                                key={task._id}
+                                task={task}
+                                onToggle={() => handleToggleStatus(task)}
+                                onEdit={() => handleEditTask(task)}
+                                onDelete={() => handleDeleteTask(task._id)}
+                                isReorderable={activeTab === "all"}
+                            />
+                        ))}
+                    </AnimatePresence>
+                </Reorder.Group>
+            )}
 
             {filteredTasks.length === 0 && (
-                <div className="text-center py-16">
-                    <CheckCircle2 size={40} className="mx-auto text-surface-300 dark:text-surface-700 mb-3" />
-                    <p className="text-surface-500">No tasks found</p>
-                    <p className="text-sm text-surface-400 mt-1">Try adjusting your filters or add a new task</p>
-                </div>
+                activeTab === "today" ? (
+                    <div className="text-center py-12">
+                        <CheckCircle2 size={40} className="mx-auto mb-3 text-surface-300 dark:text-surface-700" />
+                        <p className="text-surface-500">No tasks for today</p>
+                        <button
+                            onClick={() => setActiveTab("all")}
+                            className="text-accent text-sm mt-2 hover:underline"
+                        >
+                            View all tasks →
+                        </button>
+                    </div>
+                ) : (
+                    <div className="text-center py-16">
+                        <CheckCircle2 size={40} className="mx-auto text-surface-300 dark:text-surface-700 mb-3" />
+                        <p className="text-surface-500">No tasks found</p>
+                        <p className="text-sm text-surface-400 mt-1">Try adjusting your filters or add a new task</p>
+                    </div>
+                )
             )}
 
             {/* Task Modal */}
@@ -317,7 +398,7 @@ export default function TaskManager() {
 }
 
 // --- Task Card Component ---
-function TaskCard({ task, onToggle, onEdit, onDelete }) {
+function TaskCard({ task, onToggle, onEdit, onDelete, isReorderable }) {
     const isCompleted = task.status === "completed";
     const catMeta = getCategoryMeta(task.category);
     const dragControls = useDragControls();
@@ -341,12 +422,14 @@ function TaskCard({ task, onToggle, onEdit, onDelete }) {
             `}
         >
             {/* Drag handle */}
-            <div
-                onPointerDown={(e) => dragControls.start(e)}
-                className="pt-0.5 opacity-40 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
-            >
-                <GripVertical size={16} className="text-surface-400" />
-            </div>
+            {isReorderable && (
+                <div
+                    onPointerDown={(e) => dragControls.start(e)}
+                    className="pt-0.5 opacity-40 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
+                >
+                    <GripVertical size={16} className="text-surface-400" />
+                </div>
+            )}
 
             {/* Checkbox */}
             <button onClick={onToggle} className="mt-0.5 flex-shrink-0">

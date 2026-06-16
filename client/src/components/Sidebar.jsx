@@ -6,7 +6,6 @@ import { motion, LayoutGroup } from "framer-motion";
 import {
     LayoutDashboard,
     CheckSquare,
-    Calendar,
     Target,
     Timer,
     BarChart3,
@@ -15,20 +14,18 @@ import {
     Moon,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import ThemeToggle from "./ThemeToggle";
 import AuthModal from "./AuthModal";
 
 const navItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "tasks", label: "Tasks", icon: CheckSquare },
-    { id: "planner", label: "Daily Plan", icon: Calendar },
     { id: "habits", label: "Habits", icon: Target },
     { id: "focus", label: "Focus", icon: Timer },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function Sidebar({ isMobile = false, onNavigate }) {
-    const { state, dispatch, logout, login, register, toggleTheme } = useApp();
+    const { state, dispatch, logout, login, register, toggleTheme, setAccentColor } = useApp();
     const [authOpen, setAuthOpen] = useState(false);
 
     const handleNavClick = (pageId) => {
@@ -65,7 +62,7 @@ export default function Sidebar({ isMobile = false, onNavigate }) {
                             <Zap size={16} className="text-surface-900" />
                         </div>
                         <span className="font-display text-xl tracking-tight text-surface-900 dark:text-surface-50">
-                            Flow
+                            Ṛta
                         </span>
                     </div>
                 </div>
@@ -147,10 +144,26 @@ export default function Sidebar({ isMobile = false, onNavigate }) {
                         </button>
                     </div>
 
-                    {/* Visual Theme Selection */}
+                    {/* Accent Color */}
                     <div className="pt-2 border-t border-surface-100 dark:border-surface-850 space-y-1.5">
-                        <span className="text-[10px] text-surface-500 uppercase tracking-wider font-bold block px-1">Theme</span>
-                        <ThemeToggle />
+                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2 text-surface-400 px-1">Accent</p>
+                        <div className="accent-picker">
+                            {[
+                                { id: "indigo", color: "#6366f1" },
+                                { id: "emerald", color: "#10b981" },
+                                { id: "rose", color: "#f43f5e" },
+                                { id: "amber", color: "#f59e0b" },
+                                { id: "ocean", color: "#0ea5e9" },
+                            ].map((accent) => (
+                                <button
+                                    key={accent.id}
+                                    className={`accent-picker__dot ${state.accentColor === accent.id ? "is-active" : ""}`}
+                                    style={{ backgroundColor: accent.color }}
+                                    onClick={() => setAccentColor(accent.id)}
+                                    title={accent.id}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </aside>

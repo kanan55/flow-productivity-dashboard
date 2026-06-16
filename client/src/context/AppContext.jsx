@@ -1,5 +1,5 @@
 // Global application state using React Context
-// Manages: theme, current page, tasks, habits, focus sessions, companion reactions, and authentication
+// Manages: accent color, current page, tasks, habits, focus sessions, and authentication
 // Syncs with API when logged in, falls back to localStorage for guest users
 
 import { createContext, useContext, useReducer, useEffect, useState, useMemo } from "react";
@@ -91,71 +91,24 @@ const SAMPLE_HABITS = [
     },
 ];
 
-function withCompanion(state, mood, message) {
-    return {
-        ...state,
-        companionEvent: {
-            mood,
-            message,
-            at: Date.now(),
-        },
-    };
-}
-
-// --- playTimerChime function to play custom MP3 sounds ---
-function playTimerChime(type = "complete", theme = "midnight") {
+// --- Simplified synthesized chime (no file loading) ---
+function playTimerChime(type = "complete") {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return false;
-
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
-
-    const masterGain = ctx.createGain();
-    // Set a good loudness
-    masterGain.gain.setValueAtTime(0.7, now);
-    masterGain.connect(ctx.destination);
-
-    // Map theme to its renamed audio file
-    const themeSoundMap = {
-        midnight: "midnight.mp3",
-        sunset: "sunset.mp3",
-        forest: "forest.mp3",
-        glass: "glass.mp3",
-        aurora: "aurora.mp3",
-        cat: "cat.mp3"
-    };
-
-    const soundFile = themeSoundMap[theme] || "midnight.mp3";
-    const url = `${process.env.PUBLIC_URL || ""}/sounds/${soundFile}`;
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.arrayBuffer();
-        })
-        .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
-        .then(audioBuffer => {
-            const source = ctx.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(masterGain);
-            source.start(now);
-        })
-        .catch(err => {
-            console.error("Failed to play custom sound file:", url, err);
-            // Fallback: simple synthesized chime if file isn't loaded
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(type === "complete" ? 880 : 660, now);
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.start(now);
-            osc.stop(now + 0.9);
-        });
-
-    window.setTimeout(() => ctx.close?.(), 8000);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(type === "complete" ? 880 : 660, now);
+    osc.frequency.exponentialRampToValueAtTime(type === "complete" ? 1320 : 440, now + 0.3);
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.9);
+    setTimeout(() => ctx.close?.(), 2000);
     return true;
 }
 
@@ -163,132 +116,83 @@ function appReducer(state, action) {
     switch (action.type) {
         // --- Auth ---
         case "SET_AUTH":
-            return withCompanion(
-                {
-                    ...state,
-                    user: action.payload.user,
-                    token: action.payload.token,
-                    darkMode: action.payload.user.darkMode ?? state.darkMode,
-                    visualTheme: action.payload.user.visualTheme ?? state.visualTheme,
-                },
-                "spark",
-                `Welcome back! Ready for deep work.`
-            );
+            return {
+                ...state,
+                user: action.payload.user,
+                token: action.payload.token,
+                darkMode: action.payload.user.darkMode ?? state.darkMode,
+                accentColor: action.payload.user.accentColor ?? state.accentColor,
+            };
         case "UPDATE_PREFERENCES":
             return {
                 ...state,
                 darkMode: action.payload.darkMode,
-                visualTheme: action.payload.visualTheme,
+                accentColor: action.payload.accentColor,
             };
         case "LOGOUT":
-            return withCompanion(
-                {
-                    ...state,
-                    user: null,
-                    token: null,
-                    tasks: SAMPLE_TASKS,
-                    habits: SAMPLE_HABITS,
-                    focusSessions: [],
-                },
-                "wave",
-                "Goodbye! You are now in Guest Mode."
-            );
+            return {
+                ...state,
+                user: null,
+                token: null,
+                tasks: SAMPLE_TASKS,
+                habits: SAMPLE_HABITS,
+                focusSessions: [],
+            };
 
         // --- Theme ---
         case "TOGGLE_THEME":
-            return withCompanion(
-                { ...state, darkMode: !state.darkMode },
-                "spark",
-                state.darkMode ? "Sunlight mode. Fresh page energy." : "Night mode. Cozy focus engaged."
-            );
-        case "SET_VISUAL_THEME": {
-            const messages = {
-                midnight: "Midnight mode. Premium focus.",
-                sunset: "Sunset vibes. Warm creativity.",
-                forest: "Forest calm. Grounded energy.",
-                glass: "Glass morphism. Modern clarity.",
-                aurora: "Aurora dreams. Cosmic inspiration.",
-                cat: "Cat theme. Cozy focus and cute meows!",
-            };
-            return withCompanion(
-                {
-                    ...state,
-                    visualTheme: action.payload,
-                },
-                "spark",
-                messages[action.payload] || "Theme updated."
-            );
-        }
+            return { ...state, darkMode: !state.darkMode };
+        case "SET_ACCENT_COLOR":
+            return { ...state, accentColor: action.payload };
 
         // --- Navigation ---
         case "SET_PAGE":
-            return withCompanion(
-                { ...state, currentPage: action.payload },
-                "wave",
-                "I am following along."
-            );
-        case "PING_COMPANION":
-            return withCompanion(
-                state,
-                action.payload?.mood || "wave",
-                action.payload?.message || "I am here."
-            );
+            return { ...state, currentPage: action.payload };
 
         // --- Tasks ---
         case "SET_TASKS":
             return { ...state, tasks: action.payload };
         case "ADD_TASK":
-            return withCompanion(
-                { ...state, tasks: [action.payload, ...state.tasks] },
-                "spark",
-                "New quest added."
-            );
+            return { ...state, tasks: [action.payload, ...state.tasks] };
         case "UPDATE_TASK":
-            return withCompanion({
+            return {
                 ...state,
                 tasks: state.tasks.map((t) =>
                     t._id === action.payload._id ? action.payload : t
                 ),
-            },
-                action.payload.status === "completed" ? "celebrate" : "nod",
-                action.payload.status === "completed" ? "Task complete. Nice hit." : "Task updated."
-            );
+            };
         case "DELETE_TASK":
-            return withCompanion({
+            return {
                 ...state,
                 tasks: state.tasks.filter((t) => t._id !== action.payload),
-            }, "blink", "Cleaned up the list.");
+            };
         case "REORDER_TASKS":
-            return withCompanion({ ...state, tasks: action.payload }, "nod", "Order restored.");
+            return { ...state, tasks: action.payload };
 
         // --- Habits ---
         case "SET_HABITS":
             return { ...state, habits: action.payload };
         case "ADD_HABIT":
-            return withCompanion(
-                { ...state, habits: [action.payload, ...state.habits] },
-                "spark",
-                "A new ritual begins."
-            );
+            return { ...state, habits: [action.payload, ...state.habits] };
         case "UPDATE_HABIT":
-            return withCompanion({
+            return {
                 ...state,
                 habits: state.habits.map((h) =>
                     h._id === action.payload._id ? action.payload : h
                 ),
-            }, "celebrate", "Habit status updated.");
+            };
         case "DELETE_HABIT":
-            return withCompanion({
+            return {
                 ...state,
                 habits: state.habits.filter((h) => h._id !== action.payload),
-            }, "blink", "Habit removed.");
+            };
 
         // --- Focus Sessions ---
         case "ADD_FOCUS_SESSION":
-            return withCompanion({
+            return {
                 ...state,
                 focusSessions: [action.payload, ...state.focusSessions],
-            }, "celebrate", "Focus session complete. Deep work paid off.");
+            };
         case "SET_FOCUS_SESSIONS":
             return { ...state, focusSessions: action.payload };
 
@@ -322,12 +226,7 @@ export function AppProvider({ children }) {
             user: null,
             token,
             darkMode: parsedLocal.darkMode ?? true,
-            visualTheme: parsedLocal.visualTheme ?? "midnight",
-            companionEvent: {
-                mood: "wave",
-                message: "Ready when you are.",
-                at: Date.now(),
-            },
+            accentColor: parsedLocal.accentColor ?? "indigo",
             tasks: parsedLocal.tasks ?? SAMPLE_TASKS,
             habits: parsedLocal.habits ?? SAMPLE_HABITS,
             focusSessions: parsedLocal.focusSessions ?? [],
@@ -371,7 +270,7 @@ export function AppProvider({ children }) {
                 "flow-app-state",
                 JSON.stringify({
                     darkMode: state.darkMode,
-                    visualTheme: state.visualTheme,
+                    accentColor: state.accentColor,
                     tasks: state.tasks,
                     habits: state.habits,
                     focusSessions: state.focusSessions,
@@ -381,22 +280,8 @@ export function AppProvider({ children }) {
 
         // Apply visual attributes to document
         document.documentElement.classList.toggle("dark", state.darkMode);
-        document.documentElement.dataset.theme = state.visualTheme || "midnight";
-
-        const theme = state.visualTheme || "midnight";
-        const wallpaperMap = {
-            midnight: "/wallpapers/midnight.png",
-            sunset: "/wallpapers/sunset.png",
-            forest: "/wallpapers/forest.png",
-            glass: "/wallpapers/glass.png",
-            aurora: "/wallpapers/aurora.png",
-            cat: "/wallpapers/cat.png",
-        };
-        document.body.style.setProperty(
-            "--theme-wallpaper",
-            `url('${process.env.PUBLIC_URL || ""}${wallpaperMap[theme] || wallpaperMap.midnight}')`
-        );
-    }, [state.darkMode, state.visualTheme, state.tasks, state.habits, state.focusSessions, state.token]);
+        document.documentElement.dataset.accent = state.accentColor || "indigo";
+    }, [state.darkMode, state.accentColor, state.tasks, state.habits, state.focusSessions, state.token]);
 
     // Async User Actions exposed to layout
     const login = async (email, password) => {
@@ -442,13 +327,13 @@ export function AppProvider({ children }) {
         }
     };
 
-    const setVisualTheme = async (themeId) => {
-        dispatch({ type: "SET_VISUAL_THEME", payload: themeId });
+    const setAccentColor = async (colorId) => {
+        dispatch({ type: "SET_ACCENT_COLOR", payload: colorId });
         if (state.token) {
             try {
-                await authAPI.updatePreferences({ visualTheme: themeId });
+                await authAPI.updatePreferences({ accentColor: colorId });
             } catch (err) {
-                console.error("Failed to save visual theme choice", err);
+                console.error("Failed to save accent color choice", err);
             }
         }
     };
@@ -589,33 +474,25 @@ export function AppProvider({ children }) {
             });
 
             if (soundEnabled) {
-                try { playTimerChime("complete", state?.visualTheme); } catch (e) { console.error(e); }
+                try { playTimerChime("complete"); } catch (e) { console.error(e); }
             }
 
             setIsBreak(true);
             focusTimer.reset(breakDuration);
-            dispatch({
-                type: "PING_COMPANION",
-                payload: { mood: "rest", message: "Focus session done. Take a break!" },
-            });
         } else {
             // Break completed
             if (soundEnabled) {
-                try { playTimerChime("break", state?.visualTheme); } catch (e) { console.error(e); }
+                try { playTimerChime("break"); } catch (e) { console.error(e); }
             }
 
             setIsBreak(false);
             focusTimer.reset(focusDuration);
-            dispatch({
-                type: "PING_COMPANION",
-                payload: { mood: "wave", message: "Break done. Ready for the next round." },
-            });
         }
-    }, [focusTimer.isComplete, isBreak, focusDuration, breakDuration, soundEnabled, state?.visualTheme]);
+    }, [focusTimer.isComplete, isBreak, focusDuration, breakDuration, soundEnabled]);
 
     // Conditional Tab Title Countdown Effect
     useEffect(() => {
-        const defaultTitle = "Flow — Smart Productivity Dashboard";
+        const defaultTitle = "Ṛta — Productivity";
         if (!state) {
             document.title = defaultTitle;
             return;
@@ -627,7 +504,7 @@ export function AppProvider({ children }) {
         if (state.currentPage === "focus" && timerHasStarted) {
             const formattedTime = `${String(focusTimer.minutes).padStart(2, "0")}:${String(focusTimer.seconds).padStart(2, "0")}`;
             const type = isBreak ? "Break" : "Focus";
-            document.title = `${formattedTime} | ${type} | Flow`;
+            document.title = `${formattedTime} | ${type} | Ṛta`;
         } else {
             document.title = defaultTitle;
         }
@@ -652,7 +529,7 @@ export function AppProvider({ children }) {
                 register,
                 logout,
                 toggleTheme,
-                setVisualTheme,
+                setAccentColor,
                 addTask,
                 updateTask,
                 deleteTask,
