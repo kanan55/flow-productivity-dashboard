@@ -311,7 +311,12 @@ export function AppProvider({ children }) {
     const getInitialState = () => {
         const token = localStorage.getItem("flow-auth-token");
         const localState = localStorage.getItem("flow-app-state");
-        const parsedLocal = localState ? JSON.parse(localState) : {};
+        let parsedLocal = {};
+        try {
+            parsedLocal = localState ? JSON.parse(localState) : {};
+        } catch (error) {
+            console.error("Failed to parse flow-app-state from localStorage:", error);
+        }
 
         return {
             user: null,
