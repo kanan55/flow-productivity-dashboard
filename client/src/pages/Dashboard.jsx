@@ -172,7 +172,7 @@ export default function Dashboard() {
             {/* 1. Header (Compact Greeting + Date) */}
             <motion.div variants={item} className="flex justify-between items-end">
                 <div>
-                    <h1 className="font-display text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-5">
+                    <h1 className="font-display text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">
                         {greetingText()}{userName ? `, ${userName}` : ""}
                     </h1>
                     <p className="text-xs text-surface-400 font-medium mt-0.5">
@@ -240,7 +240,7 @@ export default function Dashboard() {
                         <Card hover={false} className="flex flex-col h-full min-h-[300px]">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold text-surface-900 dark:text-surface-55">
+                                    <h3 className="font-semibold text-surface-900 dark:text-surface-50">
                                         Today's Tasks
                                     </h3>
                                     {todayTasks.length > 0 && (
@@ -319,7 +319,7 @@ export default function Dashboard() {
                     <motion.div variants={item}>
                         <Card hover={false}>
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-semibold text-surface-900 dark:text-surface-55">
+                                <h3 className="font-semibold text-surface-900 dark:text-surface-50">
                                     Habits
                                 </h3>
                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/15 text-accent">
@@ -390,7 +390,7 @@ export default function Dashboard() {
                         <Card hover={false} className="transition-all duration-200">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold text-surface-900 dark:text-surface-55">
+                                    <h3 className="font-semibold text-surface-900 dark:text-surface-50">
                                         Focus Timer
                                     </h3>
                                     {focusSessionsCount > 0 && (
@@ -494,7 +494,7 @@ export default function Dashboard() {
                     <motion.div variants={item}>
                         <Card hover={false}>
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-semibold text-surface-900 dark:text-surface-55">
+                                <h3 className="font-semibold text-surface-900 dark:text-surface-50 font-semibold">
                                     Weekly Activity
                                 </h3>
                                 <button
