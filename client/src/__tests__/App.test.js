@@ -13,6 +13,6 @@ test("renders the dashboard overview", async () => {
         </AppProvider>
     );
 
-    expect(await screen.findByText(/productivity overview/i)).toBeInTheDocument();
-    expect(screen.getByText(/Productivity Score/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Today's Tasks/i)).toBeInTheDocument();
+    expect(screen.getByText(/Weekly Activity/i)).toBeInTheDocument();
 });
