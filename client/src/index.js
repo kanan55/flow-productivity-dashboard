@@ -18,6 +18,20 @@ root.render(
 
 // Register Service Worker for PWA support in production only
 if (process.env.NODE_ENV === "production") {
+    // Clear old flow-cache-v1 programmatically to fix mobile caching issues
+    if ("caches" in window) {
+        caches.keys().then((names) => {
+            for (let name of names) {
+                if (name === "flow-cache-v1") {
+                    caches.delete(name).then(() => {
+                        console.log("Programmatically deleted old cache:", name);
+                        window.location.reload();
+                    });
+                }
+            }
+        });
+    }
+
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
             navigator.serviceWorker
